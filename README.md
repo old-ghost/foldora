@@ -14,7 +14,8 @@ Foldora provides essential file and directory operations, including:
 ## Installation
 
 To install Foldora, clone the repository and navigate to the project directory:
-# Make sure python is installed in case you're new to Python.
+
+- PS: Make sure python is installed in case you're new to Python.
 
 ```sh
 pip install foldora
