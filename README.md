@@ -10,6 +10,7 @@ Foldora provides essential file and directory operations, including:
 - Creating directories and files.
 - Purging files and directories.
 - Displaying file contents.
+- Filling blanks in file and directory names.
 
 ## Installation
 
@@ -36,7 +37,7 @@ fd l [optional_paths]
 **Examples:**
 ```sh
 fd l           # List contents of the current directory
-fd l /path/to/directory1 /path/to/directory2  # List contents of specific directories
+fd l /path/to/dir1 /path/to/dir2  # List contents of specific directories
 ```
 
 ### Creating Directories
@@ -44,12 +45,12 @@ Creates one or more directories.
 
 **Command:**
 ```sh
-fd d directory1 directory2 ...
+fd d [paths]
 ```
 
 **Example:**
 ```sh
-fd d new_folder another_folder
+fd d /path/to/dir1 /path/to/dir2 ...
 ```
 
 ### Creating Files
@@ -57,13 +58,13 @@ Creates one or more files in the current directory or a specified path.
 
 **Command:**
 ```sh
-fd f '[-p path]' file1 file2 ...
+fd f '[-p path]' [file_paths]
 ```
 
 **Examples:**
 ```sh
 fd f file1.txt file2.txt  # Create files in the current directory
-fd f -p /path/to/directory file1.txt file2.txt  # Create files in a specified directory
+fd f -p /path/to/dir file1.txt file2.txt  # Create files in a specified directory
 ```
 
 ### Purging Files and Directories
@@ -71,12 +72,12 @@ Deletes specified files and directories with user confirmation.
 
 **Command:**
 ```sh
-fd p file1 directory1 ...
+fd p [file_paths] [dir_paths]
 ```
 
 **Example:**
 ```sh
-fd p old_file.txt unused_folder
+fd p /path/to/dir1 /path/to/file1 ...
 ```
 
 ### Displaying File Contents
@@ -84,12 +85,28 @@ Shows the content of one or more files.
 
 **Command:**
 ```sh
-fd c file1 file2 ...
+fd c [file_paths]
 ```
 
 **Example:**
 ```sh
-fd c notes.txt log.txt
+fd c /path/to/file1 /path/to/file2 ...
+```
+
+### Filling Blanks in File and Directory Names
+Replaces spaces in file and directory names within a given path with underscores.
+
+If no path is provided, the current working directory is used. You will also be prompted to activate "Sub Filling" mode, which triggers a low-level operation.
+
+**Command:**
+```sh
+fd b [path]
+```
+
+**Example:**
+```sh
+fd b               # Current directory
+fd b /path/to/dir  # Specific directory
 ```
 
 ## Contributing

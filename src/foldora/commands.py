@@ -1,12 +1,17 @@
-import sys
+import os
 import click
 from pathlib import Path
+from os.path import isfile, isdir
 
-from foldora.utils import del_all
+from foldora.utils import sub_dell, list_path, sub_fill
 
 
 @click.command(help="List all files and directories of a given path.")
-@click.argument("paths", nargs=-1, type=click.Path(exists=True, file_okay=True, readable=True, path_type=Path))
+@click.argument(
+    "paths",
+    nargs=-1,
+    type=click.Path(exists=True, file_okay=False, readable=True, path_type=Path),
+)
 def l(paths):
     """
     List files and directories.
@@ -20,7 +25,8 @@ def l(paths):
         fd list
         fd list /path/to/directory
     """
-    if len(paths) == 0:
+
+    if len(paths) < 1:
         click.echo("\t")
 
         for entry in Path.cwd().iterdir():
@@ -46,7 +52,11 @@ def l(paths):
 
 
 @click.command(help="Create directories and sub-directories.")
-@click.argument("path", nargs=-1, type=click.Path(file_okay=False, exists=False, path_type=Path))
+@click.argument(
+    "path",
+    nargs=-1,
+    type=click.Path(file_okay=False, exists=False, path_type=Path),
+)
 def d(path):
     """
     Create directories.
@@ -71,47 +81,63 @@ def d(path):
 
 @click.command(help="Create files in the current (or a given) path.")
 @click.option(
-    "-p", "--path", nargs=1, type=click.Path(exists=False, path_type=Path), help="Custom path where the file(s) will be saved."
+    "-p",
+    "--path",
+    nargs=1,
+    type=click.Path(exists=False, path_type=Path),
+    help="Custom path where the file(s) will be saved.",
 )
-@click.argument("filename", nargs=-1, type=click.File(mode="w", encoding="utf-8"))
-def f(filename, path):
+@click.argument(
+    "paths",
+    nargs=-1,
+    type=click.File(
+        mode="w",
+        encoding="utf-8",
+    ),
+)
+def f(paths, path):
     """
     Create files.
 
     Creates one or more files in the current directory or specified path.
 
     Arguments:
-        filename (tuple of File): Names of files to be created.
+        paths (tuple of File): Names of files to be created.
         path (Path, optional): Custom path where the files will be created. If not provided, files are created in the current directory.
 
     Examples:
         fd files file1.txt file2.txt
         fd files file1.txt file2.txt -p /path/to/directory
     """
+
     if path:
         if not path.exists():
             path.mkdir(parents=True, exist_ok=True)
 
-        for f in filename:
+        for f in paths:
             with open(path / f.name, "w") as file:
                 file.write("")
 
-        click.echo(f"\n-> ({len(filename)}) file(s) have been created.")
+        click.echo(f"\n-> ({len(paths)}) file(s) have been created.")
         return
 
-    if len(filename) == 0:
-        click.echo("No file path(s) have been given.")
+    if len(paths) == 0:
+        click.echo("\nNo file path was given.")
         return
 
-    for f in filename:
+    for f in paths:
         with open(f.name, "w") as file:
             file.write("")
 
-    click.echo(click.style(f"\n-> ({len(filename)}) file(s) have been created.", fg="cyan"))
+    click.echo(click.style(f"\n-> ({len(paths)}) file(s) have been created.", fg="cyan"))
 
 
 @click.command(help="Purge files and folders.")
-@click.argument("paths", nargs=-1, type=click.Path(exists=True, file_okay=True, readable=True, path_type=Path))
+@click.argument(
+    "paths",
+    nargs=-1,
+    type=click.Path(exists=True, file_okay=True, readable=True, path_type=Path),
+)
 def p(paths):
     """
     Purge files and directories.
@@ -129,13 +155,13 @@ def p(paths):
     files = []
 
     if len(paths) < 1:
-        click.echo("No files or directories were selected.")
+        click.echo("\nNo path was given.")
         return
 
     click.echo("\t")
 
-    if not click.confirm("Affirmative?", abort=True):
-        sys.exit(1)
+    if not click.confirm("Proceed with deleting the files/folders ?", abort=True):
+        return
 
     click.echo("\t")
 
@@ -143,7 +169,7 @@ def p(paths):
 
         # Directories
         if path.is_dir():
-            del_all(path)
+            sub_dell(path)
             dirs.append(i)
 
         # Files
@@ -173,20 +199,70 @@ def c(files):
         fd content file1.txt file2.txt
     """
 
-    if len(files) == 0:
-        click.echo("No file path(s) have been given.")
+    if len(files) < 1:
+        click.echo("\nNo file path was given.")
         return
 
     click.echo("\t")
 
     for file in files:
-        click.echo(f"-> {file.name}...................START")
+        click.echo(f"-> {file.name}.........................")
         click.echo("", nl=True)
         click.echo(f"{file.read().rstrip()}")
         click.echo("", nl=True)
-        click.echo(f"-> {file.name}...................END", nl=True)
-        click.echo("\t")
 
         if file != files[-1]:
-            click.echo("==============================================")
+            click.echo("=========================")
             click.echo("\t")
+
+
+@click.command(help="Fills blanks in file and folder names.")
+@click.argument(
+    "path",
+    nargs=1,
+    required=False,
+    type=click.Path(exists=True, file_okay=True, dir_okay=True, readable=True, path_type=Path),
+)
+def b(path):
+    """
+    Fills blanks in file and folder names by replacing spaces with underscores.
+
+    If the path is not provided, the current directory is used.
+
+    Optionally, the user can activate "Sub Filling" mode by typing 'y' when prompted,
+    which applies a low-level operation to the given path.
+
+    Arguments:
+        path (str, optional): Path to the directory or file. If omitted, defaults to the current directory.
+
+    Examples:
+        fd b /path/
+
+    Note:
+        - Only top-level files and folders are renamed unless `sub_fill` is activated.
+    """
+
+    sub: str = input("\nActivate Sub Filling (y/n): ").strip().lower()
+
+    click.echo("\t")
+
+    if not path:
+        path = "."
+
+    if sub == "y":
+        sub_fill(path)
+        click.echo("\nDONE", nl=True)
+
+        return
+
+    for df in os.listdir(path):
+        origin_path: Path = f"{path}/{df}"
+
+        if isfile(origin_path):
+            os.rename(origin_path, f"{path}/{df.replace(" ", "_")}")
+
+        if isdir(origin_path):
+            os.rename(origin_path, f"{path}/{df.replace(" ", "_")}")
+
+    list_path(path)
+    click.echo("\nDONE", nl=True)
