@@ -1,6 +1,6 @@
 # Foldora - File & Directory Manager CLI Tool
 
-Foldora is a Python command-line interface (CLI) tool designed to help you efficiently manage files and directories.
+**Foldora** is a Python command-line interface (CLI) tool designed to help you efficiently manage files and directories.
 
 ## Features
 
