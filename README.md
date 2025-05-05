@@ -64,6 +64,7 @@ fd f '[-p path]' [file_paths]
 **Examples:**
 ```sh
 fd f file1.txt file2.txt  # Create files in the current directory
+
 fd f -p /path/to/dir file1.txt file2.txt  # Create files in a specified directory
 ```
 
