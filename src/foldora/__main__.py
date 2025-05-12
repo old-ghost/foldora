@@ -3,7 +3,7 @@ from foldora.commands import b, c, d, f, l, p
 
 
 @click.group()
-@click.version_option("0.0.2")
+@click.version_option("0.0.3")
 def cli():
     """
     Foldora - File & Directory Manager CLI Tool.

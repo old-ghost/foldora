@@ -3,7 +3,7 @@ import click
 from pathlib import Path
 from os.path import isfile, isdir
 
-from foldora.utils import sub_dell, list_path, sub_fill
+from foldora.utils import sub_dell, list_path, sub_fill, colorHandler
 
 
 @click.command(help="List all files and directories of a given path.")
@@ -30,10 +30,11 @@ def l(paths):
         click.echo("\t")
 
         for entry in Path.cwd().iterdir():
-            file = click.style(f"   FILE - {entry.name}", fg="cyan")
-            folder = click.style(f"   DIR - [{entry.name}]", fg="green")
+            file = colorHandler(f"[FILE] :: {entry.name}", "bright_blue")
+            folder = colorHandler(f"[DIR] :: [{entry.name}]", "green")
             click.echo(folder if entry.is_dir() else file, nl=True, color=True)
 
+        click.echo("\t")
         return
 
     for i, path in enumerate(paths):
@@ -43,12 +44,14 @@ def l(paths):
             click.echo(f"({path}):")
 
         for entry in path.iterdir():
-            file = click.style(f"   FILE - {entry.name}", fg="cyan")
-            folder = click.style(f"   DIR - [{entry.name}]", fg="green")
+            file = colorHandler(f"[FILE] :: {entry.name}", "bright_blue")
+            folder = colorHandler(f"[DIR] :: [{entry.name}]", "green")
             click.echo(folder if entry.is_dir() else file, nl=True, color=True)
 
         if i > 1:
             click.echo("\t")
+
+    click.echo("\t")
 
 
 @click.command(help="Create directories and sub-directories.")
@@ -70,13 +73,16 @@ def d(path):
         fd dirs new_directory another_directory
     """
     if len(path) == 0:
-        click.echo("No path was given.")
+        click.echo(
+            colorHandler("\n[!] No path was given.\n", "bright_yellow"),
+            color=True,
+        )
         return
 
     for i, p in enumerate(path):
         p.mkdir(parents=True, exist_ok=True)
 
-    click.echo(click.style(f"\n-> ({len(path)}) directory(s) have been created.", fg="green"))
+    click.echo(colorHandler(f"\n[{len(path)}] DIR(s) have been created.\n", "green"))
 
 
 @click.command(help="Create files in the current (or a given) path.")
@@ -118,18 +124,18 @@ def f(paths, path):
             with open(path / f.name, "w") as file:
                 file.write("")
 
-        click.echo(f"\n-> ({len(paths)}) file(s) have been created.")
+        click.echo(colorHandler(f"\n[({len(paths)}] FILE(s) have been created.", "green"))
         return
 
     if len(paths) == 0:
-        click.echo("\nNo file path was given.")
+        click.echo(colorHandler("\n[!] No file path was given.\n", "bright_yellow"))
         return
 
     for f in paths:
         with open(f.name, "w") as file:
             file.write("")
 
-    click.echo(click.style(f"\n-> ({len(paths)}) file(s) have been created.", fg="cyan"))
+    click.echo(colorHandler(f"\n[{len(paths)}] FILE(s) have been created.\n", "bright_blue"))
 
 
 @click.command(help="Purge files and folders.")
@@ -155,12 +161,12 @@ def p(paths):
     files = []
 
     if len(paths) < 1:
-        click.echo("\nNo path was given.")
+        click.echo(colorHandler("\n[!] No path was given.\n", "bright_yellow"))
         return
 
     click.echo("\t")
 
-    if not click.confirm("Proceed with deleting the files/folders ?", abort=True):
+    if not click.confirm(text="Proceed with deleting the files/folders ?", abort=True):
         return
 
     click.echo("\t")
@@ -178,10 +184,12 @@ def p(paths):
             files.append(i)
 
     if len(dirs) > 0:
-        click.echo(click.style(f"-> ({len(dirs)}) directory(s) have been removed.", fg="green"))
+        click.echo(colorHandler(f"[{len(dirs)}] DIR(s) have been removed.", "green"))
 
     if len(files) > 0:
-        click.echo(click.style(f"-> ({len(files)}) file(s) have been removed.", fg="cyan"))
+        click.echo(colorHandler(f"[{len(files)}] FILE(s) have been removed.", "bright_blue"))
+
+    click.echo("\t")
 
 
 @click.command(help="Show the content of one or more files.")
@@ -200,20 +208,20 @@ def c(files):
     """
 
     if len(files) < 1:
-        click.echo("\nNo file path was given.")
+        click.echo(colorHandler("\n[!] No file path was given.\n", "bright_yellow"))
         return
 
     click.echo("\t")
 
     for file in files:
-        click.echo(f"-> {file.name}.........................")
-        click.echo("", nl=True)
-        click.echo(f"{file.read().rstrip()}")
-        click.echo("", nl=True)
+        click.echo(colorHandler(f"============[{file.name}]============", "green"), nl=True)
+        click.echo("\t")
+        click.echo(f"{file.read().strip()}", nl=True)
 
         if file != files[-1]:
-            click.echo("=========================")
             click.echo("\t")
+
+    click.echo("\t")
 
 
 @click.command(help="Fills blanks in file and folder names.")
@@ -223,13 +231,13 @@ def c(files):
     required=False,
     type=click.Path(exists=True, file_okay=True, dir_okay=True, readable=True, path_type=Path),
 )
-def b(path):
+def b(path: Path):
     """
     Fills blanks in file and folder names by replacing spaces with underscores.
 
     If the path is not provided, the current directory is used.
 
-    Optionally, the user can activate "Sub Filling" mode by typing 'y' when prompted,
+    Optionally, the user can activate `Deep Folder Traversal` mode by typing 'y' when prompted,
     which applies a low-level operation to the given path.
 
     Arguments:
@@ -239,10 +247,10 @@ def b(path):
         fd b /path/
 
     Note:
-        - Only top-level files and folders are renamed unless `sub_fill` is activated.
+        - Only top-level files and folders are renamed unless `Folder Traversal` is activated.
     """
 
-    sub: str = input("\nActivate Sub Filling (y/n): ").strip().lower()
+    sub: str = input("\n[+] Deep Folder Traversal (y/n): ").strip().lower()
 
     click.echo("\t")
 
@@ -251,18 +259,17 @@ def b(path):
 
     if sub == "y":
         sub_fill(path)
-        click.echo("\nDONE", nl=True)
-
+        click.echo(colorHandler("\n[DONE]\n", "white"), nl=True)
         return
 
     for df in os.listdir(path):
-        origin_path: Path = f"{path}/{df}"
+        origin_path: Path = Path(f"{path}/{df}").resolve()
 
         if isfile(origin_path):
-            os.rename(origin_path, f"{path}/{df.replace(" ", "_")}")
+            os.rename(origin_path, f"{path}/{df.replace(' ', '_')}")
 
         if isdir(origin_path):
-            os.rename(origin_path, f"{path}/{df.replace(" ", "_")}")
+            os.rename(origin_path, f"{path}/{df.replace(' ', '_')}")
 
     list_path(path)
-    click.echo("\nDONE", nl=True)
+    click.echo(colorHandler("\n[DONE]\n", "white"), nl=True)

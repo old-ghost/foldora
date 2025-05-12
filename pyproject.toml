@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "foldora"
-version = "0.0.2"
+version = "0.0.3"
 license = {text = "MIT"}
 readme = {file = "README.md", content-type = "text/markdown"}
 description = "A CLI tool that manages files and directories."
@@ -18,8 +18,8 @@ dependencies = [
     "importlib-metadata; python_version < '3.12'",
 ]
 classifiers = [
-    "Intended Audience :: Developers",
-    "Development Status :: 5 - Stable",
+    "Intended Audience :: Developers, CLI Professionals",
+    "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License"
 ]
