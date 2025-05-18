@@ -4,8 +4,8 @@ from pathlib import Path
 from os.path import isfile, isdir
 
 
-def colorHandler(string: str, fgcolor: str, bgcolor: str = "black"):
-    return click.style(string, fg=fgcolor)
+def colorHandler(string: str, fgcolor: str):
+    click.echo(click.style(string, fg=fgcolor), color=True)
 
 
 def sub_dell(path):

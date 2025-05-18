@@ -1,5 +1,13 @@
 import click
-from foldora.commands import b, c, d, f, l, p
+
+from foldora.commands import (
+    create_directories,
+    create_files,
+    list_all,
+    purge_all,
+    rename_spaces,
+    show_contents,
+)
 
 
 @click.group()
@@ -14,9 +22,9 @@ def cli():
     pass
 
 
-cli.add_command(l)
-cli.add_command(d)
-cli.add_command(f)
-cli.add_command(p)
-cli.add_command(c)
-cli.add_command(b)
+cli.add_command(list_all, "la")
+cli.add_command(create_directories, "cd")
+cli.add_command(create_files, "cf")
+cli.add_command(purge_all, "pa")
+cli.add_command(show_contents, "sc")
+cli.add_command(rename_spaces, "rs")
