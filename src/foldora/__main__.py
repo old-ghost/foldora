@@ -11,7 +11,7 @@ from foldora.commands import (
 
 
 @click.group()
-@click.version_option("0.0.3")
+@click.version_option("0.0.4")
 def cli():
     """
     Foldora - File & Directory Manager CLI Tool.
