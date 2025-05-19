@@ -331,7 +331,13 @@ def rename_spaces(path: Path):
     if not path:
         path = "."
 
-    if click.confirm(text="Deep Folder Traversal?", abort=False):
+    if click.confirm(
+        text="Deep Folder Traversal (default No)?",
+        prompt_suffix=": ",
+        show_default=True,
+        default=False,
+        abort=False,
+    ):
         click.echo("\t")
 
         try:
