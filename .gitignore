@@ -1,4 +1,8 @@
+[dirs]
 venv
 foldora.egg*
-*__pycache__*
+__pycache__
+
+[files]
 test.py
+requirements.txt
