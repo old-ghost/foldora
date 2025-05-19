@@ -8,7 +8,7 @@ def colorHandler(string: str, fgcolor: str):
     click.echo(click.style(string, fg=fgcolor), color=True)
 
 
-def sub_dell(path):
+def sub_dell(path: Path):
     for sub in path.iterdir():
         if sub.is_dir():
             sub_dell(sub)
@@ -36,9 +36,9 @@ def list_path(path: Path):
         origin_path: Path = Path(f"{path}/{df}").resolve()
 
         if isfile(origin_path):
-            file = colorHandler(f"[FILE] RENAMED :: {df}", "bright_blue")
-            click.echo(file, nl=True)
+            file = colorHandler(f"[DONE] :: FILE ({df}) RENAMED.", "blue")
+            click.echo(file, nl=False)
 
         if isdir(origin_path):
-            folder = colorHandler(f"[FOLDER] RENAMED :: {df}", "green")
-            click.echo(folder, nl=True)
+            folder = colorHandler(f"[DONE] :: DIR ({df}) RENAMED.", "green")
+            click.echo(folder, nl=False)

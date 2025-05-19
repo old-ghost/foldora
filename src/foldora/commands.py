@@ -111,7 +111,7 @@ def create_directories(paths):
 
             time.sleep(0.5)
         except PermissionError:
-            colorHandler(f"[DENIED] :: ({paths[i]}) NOT CREATED.\n", "red")
+            colorHandler(f"[DENIED] :: ADMIN ACCESS REQUIRED.\n", "red")
             return
 
     colorHandler(f"\n[DONE] :: ({len(paths)}) DIR(s) CREATED.\n", "blue")
@@ -160,7 +160,7 @@ def create_files(paths, path):
             if not path.exists():
                 path.mkdir(parents=True, exist_ok=True)
         except PermissionError:
-            colorHandler(f"[DENIED] :: ({path}) REQUIRE FULL ACCESS.\n", "red")
+            colorHandler(f"[DENIED] :: ADMIN ACCESS REQUIRED.\n", "red")
             return
 
         for f in paths:
@@ -171,8 +171,8 @@ def create_files(paths, path):
                 colorHandler(f"\n[DONE] :: FILE ({f.name}) CREATED.", "green")
 
             except PermissionError:
-                colorHandler(f"[DENIED] :: ({f.name}) REQUIRE FULL ACCESS.", "red")
-                continue
+                colorHandler(f"[DENIED] :: ADMIN ACCESS REQUIRED.", "red")
+                return
 
         click.echo("\t")
         return
@@ -192,15 +192,10 @@ def create_files(paths, path):
             colorHandler(f"[DONE] :: FILE ({f.name}) CREATED.", "blue")
 
         except PermissionError:
-            colorHandler(f"\n[DENIED] :: ({f.name}) REQUIRE FULL ACCESS.\n", "red")
-            continue
+            colorHandler(f"\n[DENIED] :: ADMIN ACCESS REQUIRED.\n", "red")
+            return
 
     click.echo("\t")
-
-
-# except (FileNotFoundError, FileExistsError):
-# click.echo(f"\n[DENIED] :: ({Path(f.filename).parent}) NOT FOUND.\n")
-# continue
 
 
 @click.command(help="Delete specified files and directories permanently.")
@@ -249,8 +244,8 @@ def purge_all(paths):
                 sub_dell(path)
                 dirs.append(i)
             except PermissionError:
-                colorHandler(f"\n[DENIED] :: ({path}) NOT DELETED.\n", "red")
-                continue
+                colorHandler(f"\n[DENIED] :: ADMIN ACCESS REQUIRED.\n", "red")
+                return
 
         # Files
         if path.is_file():
@@ -258,8 +253,8 @@ def purge_all(paths):
                 path.unlink(path)
                 files.append(i)
             except PermissionError:
-                colorHandler(f"\n[DENIED] :: ({path}) NOT DELETED.\n", "red")
-                continue
+                colorHandler(f"\n[DENIED] :: ADMIN ACCESS REQUIRED.\n", "red")
+                return
 
     if len(dirs) > 0:
         colorHandler(f"[DONE] :: ({len(dirs)}) DIR(s) REMOVED.", "green")
@@ -313,7 +308,7 @@ def show_contents(files):
     required=False,
     type=click.Path(exists=True, file_okay=True, dir_okay=True, readable=True, path_type=Path),
 )
-def rename_spaces(path):
+def rename_spaces(path: Path):
     """
     Replace spaces in file and folder names with underscores.
 
@@ -336,14 +331,19 @@ def rename_spaces(path):
     if not path:
         path = "."
 
-    if click.confirm(text="Deep Folder Traversal ?", abort=False):
+    if click.confirm(text="Deep Folder Traversal?", abort=False):
+        click.echo("\t")
+
         try:
             sub_fill(Path(path).resolve())
-            colorHandler("\n[DONE] :: DIRS/FILES RENAMED.\n", "green")
+            click.echo("\t")
+
             return
         except PermissionError:
-            colorHandler("\n[DENIED] :: ADMIN ACCESS REQUIRED.\n", "red")
+            colorHandler("[DENIED] :: ADMIN ACCESS REQUIRED.\n", "red")
             return
+
+    click.echo("\t")
 
     for df in os.listdir(path):
         origin_path: Path = Path(f"{path}/{df}").resolve()
@@ -356,8 +356,8 @@ def rename_spaces(path):
                 os.rename(origin_path, f"{path}/{df.replace(' ', '_')}")
 
         except PermissionError:
-            colorHandler("\n[!] Operation Denied.\n", "red")
-            continue
+            colorHandler("[DENIED] :: ADMIN ACCESS REQUIRED.\n", "red")
+            return
 
     list_path(Path(path).resolve())
-    colorHandler("\n[DONE] :: DIRS.FILES RENAMED.\n", "green")
+    click.echo("\t")
