@@ -1,17 +1,17 @@
 import click
 
 from foldora.commands import (
-    create_directories,
-    create_files,
+    fix_spaces,
     list_all,
+    new_dirs,
+    new_files,
     purge_all,
-    rename_spaces,
-    show_contents,
+    view_contents,
 )
 
 
 @click.group()
-@click.version_option("0.0.5")
+@click.version_option("0.0.6")
 def cli():
     """
     Foldora - File & Directory Manager CLI Tool.
@@ -23,8 +23,8 @@ def cli():
 
 
 cli.add_command(list_all, "la")
-cli.add_command(create_directories, "cd")
-cli.add_command(create_files, "cf")
-cli.add_command(purge_all, "pa")
-cli.add_command(show_contents, "sc")
-cli.add_command(rename_spaces, "rs")
+cli.add_command(new_dirs, "nd")
+cli.add_command(new_files, "nf")
+cli.add_command(purge_all, "pg")
+cli.add_command(fix_spaces, "fs")
+cli.add_command(view_contents, "vc")

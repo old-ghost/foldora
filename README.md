@@ -1,218 +1,185 @@
 # Foldora - File & Directory Manager CLI Tool
 
-[![PyPI version](https://img.shields.io/pypi/v/foldora)](https://pypi.org/project/foldora/)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Downloads](https://img.shields.io/pypi/dm/foldora)](https://pypi.org/project/foldora/)
+[![PyPI version](https://img.shields.io/pypi/v/foldora)](https://pypi.org/project/foldora/)
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
 
 **Foldora** is a Python command-line interface (CLI) tool designed to help you efficiently manage files and directories.
 
+---
+
 ## 🚀 Features
 
-Foldora provides essential file and directory operations, including:
+Foldora provides essential file and directory management commands:
 
-- 📝 Displaying file contents
-- 🧹 Purging files and directories
-- 📁 Listing files and directories  
-- 📂 Creating directories and files  
-- ✏️ Replacing spaces in file and directory names with underscores  
+- 📁 List files and directories  
+- 📂 Create directories and files  
+- 🧹 Delete (purge) files and directories  
+- 📝 Display file contents  
+- ✏️ Replace spaces in file and folder names with underscores  
+
+---
 
 ## 🛠️ Installation
 
-To install Foldora, clone the repository and navigate to the project directory:
+Install Foldora from PyPI:
 
-- PS: Make sure python is installed in case you're new to Python.
-
-```sh
+```bash
 pip install foldora
 ```
+
+> **Note:** Ensure Python is installed and available in your system path.
+
+---
 
 ## 📦 Usage
 
 Run Foldora using the `fd` command followed by the desired operation.
 
+---
 
 ### 📁 List Files and Directories
 
-Lists all files and directories in the current or specified paths.
-
+List the files and directories within one or more specified paths.  
+If no paths are provided, the current working directory is used.
 
 **Command:**
-
-```sh
-fd la [optional_paths]
+```bash
+fd la [paths] [--files] [--dirs]
 ```
-
 
 **Notes:**
-
-- Hidden files and directories may also be included depending on the system settings.
-- If a specified path is a file, an error will be raised.
-- Multiple paths can be specified to list contents from different directories at once.
-
+- If a specified path is a file, only that file will be listed.  
+- Hidden files and directories may be included depending on your system settings.  
+- Multiple paths can be provided to list contents from different directories simultaneously.  
 
 **Examples:**
-
-- List files/dirs of the current directory
-
-```sh
+```bash
 fd la
+fd la --files
+fd la --dirs
+fd la --files /path/to/dir
+fd la --dirs /path/to/dir
+fd la --files /path1 /path2
+fd la --dirs /path1 /path2
 ```
 
-- List files/dirs of specific directories
-
-```sh
-fd la /path/to/dir1 /path/to/dir2  
-```
+---
 
 ### 📂 Create Directories
 
-Creates one or more directories.
-
+Create one or more directories.  
+All necessary parent directories are created automatically if they do not exist.
 
 **Command:**
-
-```sh
-fd cd [paths]
+```bash
+fd nd [paths]
 ```
-
 
 **Notes:**
+- Does not modify existing directories.  
+- Supports creating multiple directories in a single command.  
 
-- Creates all necessary parent directories if they do not exist.
-- Does not modify existing directories.
-- Supports creating multiple directories in a single command.
-
-
-**Example:**
-
-```sh
-fd cd /path/to/dir1 /path/to/dir2 ...
+**Examples:**
+```bash
+fd nd directory1 directory2
+fd nd /path/to/parent/new_directory
 ```
 
+---
 
 ### 📄 Create Files
 
-Creates one or more files in the current directory or a specified path.
-
+Create one or more empty files in the current directory or a specified path.
 
 **Command:**
-
-```sh
-fd cf '[-p path]' [file_paths]
+```bash
+fd nf '[-tp path_to_dir]' [filenames]
 ```
 
-
 **Notes:**
-
-- Existing files with the same names will not be overwritten.
-- If the specified directory (or path) does not exist, it will be created.
-- Supports creating multiple files in a single command.
-
+- Supports creating multiple files in one command.  
+- Existing files will not be overwritten.  
+- If the specified directory does not exist, an error will be raised.  
 
 **Examples:**
-
-- Create files in the current directory
-
-```sh
-fd cf file1.txt file2.txt  
+```bash
+fd nf file1.txt file2.txt
+fd nf -tp /path/to/dir file1.txt file2.txt
 ```
 
-- Create files in a specified directory
+---
 
-```sh
-fd cf -p /path/to/dir file1.txt file2.txt  
-```
+### 🧹 Delete Files and Directories
 
-
-### 🧹 Purge Files and Directories
-
-Deletes specified files and directories with user confirmation.
-
+Permanently delete specified files and directories, with user confirmation before proceeding.
 
 **Command:**
-
-```sh
-fd pa [file_paths] [dir_paths]
+```bash
+fd pg [paths]
 ```
-
 
 **Notes:**
+- Use with caution — this action **cannot be undone**.  
+- Directories are deleted recursively, including all contents.  
+- Requires proper permissions to delete the specified paths.  
 
-- Use with caution, as this action cannot be undone.
-- Directories will be deleted recursively, including all their contents.
-- Ensure you have the necessary permissions to delete the specified paths.
-
-
-**Example:**
-
-```sh
-fd pa /path/to/dir1 /path/to/file1 ...
+**Examples:**
+```bash
+fd pg file1 directory1
 ```
+
+---
 
 ### 📝 Display File Contents
 
-Shows the content of one or more files.
-
+Display the contents of one or more files in the console.
 
 **Command:**
-
-```sh
-fd sc [file_paths]
+```bash
+fd vc [files]
 ```
 
 **Notes:**
+- Files must be readable.  
+- Supports multiple files — each file’s content is displayed in sequence.  
 
-- Files must be readable, or an error will be raised.
-- Supports multiple files, displaying each file's content in sequence.
-
-
-**Example:**
-
-```sh
-fd sc /path/to/file1 /path/to/file2 ...
+**Examples:**
+```bash
+fd vc file1.txt file2.txt
 ```
 
+---
 
-### ✏️ Fill Blanks in File/Directory Names
+### ✏️ Replace Spaces in File/Folder Names
 
-Replace spaces in file and folder names with underscores.
-
-This command renames files and folders by replacing any spaces in their names with underscores. It operates on the specified directory (or the current directory if none is provided). All files and directories in that location will have their names updated to remove spaces.
-
+Rename files and folders by replacing spaces in their names with underscores.
 
 **Command:**
-
-```sh
-fd rs [path]
+```bash
+fd fs [path]
 ```
 
 **Notes:**
+- Defaults to the current directory if no path is specified.  
+- By default, only top-level files and folders are renamed.  
 
-- By default, only top-level files and folders are renamed.
-- When prompted, entering 'y' activates Deep Folder Traversal mode, which processes all nested directories.
-- Deep Folder Traversal mode allows recursive renaming for all files and folders within the specified path.
-
-
-**Example:**
-
-- Current directory
-
-```sh
-fd rs
+**Examples:**
+```bash
+fd fs
+fd fs /path/to/dir
 ```
 
-- Specific directory
-
-```sh
-fd rs /path/to/dir
-```
-
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to open issues or submit pull requests to help improve Foldora.
+Contributions are welcome!  
+Feel free to open issues or submit pull requests to help improve Foldora.
+
+---
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License**.

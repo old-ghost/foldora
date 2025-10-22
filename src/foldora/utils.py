@@ -1,44 +1,37 @@
-import os
-import click
+from os import listdir, rename
 from pathlib import Path
-from os.path import isfile, isdir
 
 
-def colorHandler(string: str, fgcolor: str):
-    click.echo(click.style(string, fg=fgcolor), color=True)
+def file_count(tpath: Path):
+    files: list = [f for f in Path(tpath).iterdir() if f.is_file()]
+    if files:
+        return len(files)
+    return 0
 
 
-def sub_dell(path: Path):
-    for sub in path.iterdir():
+def dir_count(tpath: Path):
+    dirs: list = [d for d in Path(tpath).iterdir() if d.is_dir()]
+    if tpath:
+        return len(dirs)
+    return 0
+
+
+def sub_del(tpath: Path):
+    for sub in tpath.iterdir():
         if sub.is_dir():
-            sub_dell(sub)
+            sub_del(sub)
         if sub.is_file():
             sub.unlink()
-    path.rmdir()
+    tpath.rmdir()
 
 
-def sub_fill(path: Path):
-    for df in os.listdir(path):
-        origin_path: Path = Path(f"{path}/{df}").resolve()
+# def sub_fix(tpath: Path):
+#     for df in listdir(tpath):
+#         origin_path: Path = Path(f"{tpath}/{df}").resolve()
 
-        if isfile(origin_path):
-            os.rename(origin_path, f"{path}/{df.replace(' ', '_')}")
+#         if origin_path.is_file():
+#             rename(origin_path, f"{tpath}/{df.replace(' ', '_')}")
 
-        if isdir(origin_path):
-            sub_fill(origin_path)
-            os.rename(origin_path, f"{path}/{df.replace(' ', '_')}")
-
-    list_path(path)
-
-
-def list_path(path: Path):
-    for df in os.listdir(path):
-        origin_path: Path = Path(f"{path}/{df}").resolve()
-
-        if isfile(origin_path):
-            file = colorHandler(f"[DONE] :: FILE ({df}) RENAMED.", "blue")
-            click.echo(file, nl=False)
-
-        if isdir(origin_path):
-            folder = colorHandler(f"[DONE] :: DIR ({df}) RENAMED.", "green")
-            click.echo(folder, nl=False)
+#         if origin_path.is_dir():
+#             sub_fix(origin_path)
+#             rename(origin_path, f"{tpath}/{df.replace(' ', '_')}")
