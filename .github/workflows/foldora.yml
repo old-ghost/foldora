@@ -110,8 +110,8 @@ jobs:
     needs: [setup_and_build, details]
     runs-on: ubuntu-latest
     environment:
-      name: foldora_release
-      url: https://pypi.org/p/foldora
+      name: foldora_cli
+      url: https://pypi.org/project/foldora
     permissions:
       id-token: write
     steps:
