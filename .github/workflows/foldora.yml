@@ -10,7 +10,7 @@ on:
 
 env:
   PACKAGE_NAME: "foldora"
-  OWNER: "ayoub-aberbach"
+  OWNER: "old-ghost"
 
 jobs:
   details:
